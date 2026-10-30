@@ -40,13 +40,12 @@ DSH 插件：**会话每次被"总结"（上下文压缩）之后，把它的名
 
 ## 安装
 
-```bash
-git clone https://github.com/AkezI-T/dsh-title-on-summary.git
-cd dsh-title-on-summary
-dsh plugin --profile desktop add .   # profile 名以 ~/.dsh/profiles 下的目录名为准（Web 端是 web）
-```
+在 DSH 里添加插件，输入本仓库地址 **`https://github.com/AkezI-T/dsh-title-on-summary`**（也接受本地目录）。
+依赖解析、挂载与语言包注册都由 DSH 完成，不需要手工改 profile 或预设。
 
-仓库里带 `lib/`（构建产物），clone 下来即可加载，不需要先构建。装完需要重启一次 DSH（loader 树要重新组合）。
+仓库里带 `lib/`（构建产物），装完不需要先构建。
+
+重启 Host 后生效。
 
 ## 配置
 
