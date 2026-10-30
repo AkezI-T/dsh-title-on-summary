@@ -1,0 +1,50 @@
+{
+  "name": "dsh-title-on-summary",
+  "version": "1.0.0",
+  "icon": "assets/plugin-icon.svg",
+  "description": "DSH 插件：会话被总结/压缩时，触发该会话标题（名称）的更新。",
+  "author": "Master",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib/",
+    "assets/",
+    "locale/",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AkezI-T/dsh-title-on-summary.git"
+  },
+  "homepage": "https://github.com/AkezI-T/dsh-title-on-summary#readme",
+  "bugs": {
+    "url": "https://github.com/AkezI-T/dsh-title-on-summary/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "session-title",
+    "compaction",
+    "summary",
+    "agent"
+  ],
+  "engines": {
+    "node": ">=22.19"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

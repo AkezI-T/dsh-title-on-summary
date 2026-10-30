@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+
+# 开发过程记录（设计/研究笔记留在本地，不进仓库）
+docs/
+
+# 打包产物
+*.tgz
+
+# logs & OS junk
+*.log
+.DS_Store
+Thumbs.db

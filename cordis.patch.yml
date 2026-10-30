@@ -1,0 +1,41 @@
+# ============================================================================
+# dsh-title-on-summary —— DSH bundle patch（插件的"挂载声明"）
+# ============================================================================
+# 安装（本地开发安装）：
+#   dsh plugin --profile web add link:F:/Agent WorkSpace/DeepSeekHarnessWorkspace/dsh-title-on-summary
+# 首次安装后需要重启一次 DSH（loader 树要重新组合）。
+# ============================================================================
+
+- insert:
+    - id: dsh-title-on-summary
+      name: dsh-title-on-summary
+      config:
+        # false：完全不订阅 session/event，也不注入服务。
+        enabled: true
+        # 标题来源：
+        #   llm   = 先让模型读总结写标题，失败（没配 route / 超时 / 返回空）落回本地派生 —— 默认
+        #   local = 只本地派生，零模型调用
+        titleSource: llm
+        # 标题字符上限（CJK 按 1 个字符算）。两条路径共用同一个上限。
+        # 24 会把英文标题切在第四个词就断掉，放宽到 32；服务端 maxTitleBytes(80 字节) 仍是硬上限。
+        maxLength: 32
+        # 低于这个长度的散文行不当标题。
+        minLength: 4
+        # C（模型生成）路径的参数。**必须同时填 provider 与 model 才真正能调**：
+        # 两个都留空时 llm-title.js 拿不到 route，直接返回 null → 自动走本地派生（A），不报错。
+        llm:
+          # 本机默认模型路由（与 profile 的 agent-default-model 保持一致）。
+          # 两个键都留空 = 不调模型，纯本地派生。
+          provider: deepseek-official
+          model: deepseek-flash
+          # 送进模型前对总结文本的 UTF-8 字节上限（超了按边界截断，不抛错）。
+          maxInputBytes: 4096
+          # 输出上限是"跑飞保护"，不是目标长度。路由带推理时，模型关不掉的思考 token 也计入这里：
+          # 64 会让请求在拿到正文前就被 max-tokens 截断（表现为每次都静默回退本地派生）。
+          maxOutputTokens: 4096
+          # 单次调用超时（毫秒）；超时按"拿不到标题"处理，落回本地派生。
+          timeoutMs: 60000
+          # 提示词里的目标词数（英文类语言）。
+          targetWords: 5
+          # 提示词里的目标汉字数（中文）。
+          targetCjkCharacters: 10

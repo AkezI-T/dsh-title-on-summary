@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Title On Summary",
+    "description": "DSH plugin: when a session is summarized or compacted, its title (name) is refreshed."
+  }
+}
