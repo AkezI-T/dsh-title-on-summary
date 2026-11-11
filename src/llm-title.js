@@ -17,7 +17,7 @@
  * @module llm-title
  */
 
-import { textBlocksToPlainText } from './title.js'
+import { prioritizeSummary } from './title.js'
 
 /** 辅助调用的默认策略。provider/model 为空表示"没配路由"，此时放弃调用。 */
 export const LLM_TITLE_DEFAULTS = {
@@ -132,15 +132,15 @@ function systemPrompt(config, hasUserMessages) {
   const languageRule = hasUserMessages
     ? 'Write the title in the same natural language as the user messages supplied after the summary. The compaction summary is written in English by the compaction engine by design; the summary language must not decide the title language.'
     : 'Use the language of the summary. If the summary quotes the user verbatim, follow the language of those quotes.'
-  // 总结覆盖整段会话，开头那节永远是"最初意图"；最近消息才是"现在"。
+  // 具体的新需求可以改变方向；简短确认语需要摘要提供实际主题。
   const focusRule = hasUserMessages
-    ? 'The summary spans the whole session, so its opening section describes the original intent. The recent user messages show the current focus: when the two disagree, title the current focus.'
+    ? 'Use recent user messages to identify a concrete change of topic and title the current focus. For acknowledgements or continuation requests such as "好的" or "继续", derive the topic from the summary sections describing current work or next steps.'
     : null
   const lines = [
     'Create a concise title for an AI coding-assistant session from the supplied compaction summary of that session.',
     'Return only the title on one line, in plain text of natural language, with no quotes, prefix, explanation, Markdown, XML, or terminal control codes. No code is allowed.',
     languageRule,
-    'Ignore structural section headings such as "Primary Request and Intent" or "Files and Code Sections"; describe what the session is actually about.',
+    'Prefer substantive Current Work, Next Step, or Pending Jobs sections (including Chinese equivalents) over the original intent. Ignore structural headings as title candidates; describe the concrete task.',
   ]
   if (focusRule !== null) lines.push(focusRule)
   lines.push(target)
@@ -264,7 +264,7 @@ export async function generateTitleWithLlm(llm, summaryBlocks, options) {
     const recentBytes = recentText === '' ? 0 : utf8ByteLength(RECENT_LABEL) + utf8ByteLength(recentText)
     const budget = Math.floor(config.maxInputBytes) - utf8ByteLength(system) - recentBytes
     if (budget <= 0) return null
-    const body = truncateUtf8(textBlocksToPlainText(summaryBlocks), budget)
+    const body = truncateUtf8(prioritizeSummary(summaryBlocks), budget)
     if (body === '') return null
     const content = [{ type: 'text', text: body }]
     if (recentText !== '') content.push({ type: 'text', text: RECENT_LABEL + recentText })

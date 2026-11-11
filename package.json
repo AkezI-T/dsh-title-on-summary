@@ -1,6 +1,6 @@
 {
   "name": "dsh-title-on-summary",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "icon": "assets/plugin-icon.svg",
   "description": "DSH 插件：会话被总结/压缩时，触发该会话标题（名称）的更新。",
   "author": "Master",
